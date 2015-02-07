@@ -48,17 +48,21 @@ def get_hits_num(soup):
     hits = m_hits.group(1)
     return hits 
 
-search_keyword = sys.argv[1]  #引数を検索キーワードにする
-#search_keyword = "これは"
-url = "http://kindai.ndl.go.jp/search/searchResult?title=%s&reshowFlg=1&detailSearchTypeNo=K&rows=200" % search_keyword
-soup = get_soup_page(url)
-hits_num = int(get_hits_num(soup))
-#print hits_num
-#200未満ならここで終わり
-print get_bookinfo(soup)
-#200以上ならこのループへ
-for page in range(2, hits_num/200 + 1):
-    url = "http://kindai.ndl.go.jp/search/searchResult?title=%s&pageNo=%s&reshowFlg=1&detailSearchTypeNo=K&rows=200" % (search_keyword, page)
+main():
+    search_keyword = sys.argv[1]  #引数を検索キーワードにする
+    #search_keyword = "これは"
+    url = "http://kindai.ndl.go.jp/search/searchResult?title=%s&reshowFlg=1&detailSearchTypeNo=K&rows=200" % search_keyword
     soup = get_soup_page(url)
+    hits_num = int(get_hits_num(soup))
+    #print hits_num
+    #200未満ならここで終わり
     print get_bookinfo(soup)
+    #200以上ならこのループへ
+    for page in range(2, hits_num/200 + 1):
+        url = "http://kindai.ndl.go.jp/search/searchResult?title=%s&pageNo=%s&reshowFlg=1&detailSearchTypeNo=K&rows=200" % (search_keyword, page)
+        soup = get_soup_page(url)
+        print get_bookinfo(soup)
 
+
+if __name__ == '__main__':
+    main()
