@@ -138,24 +138,29 @@ def book_download(now_pid, now_max, page_size=20):
 
 
 #メインループのはじまり
-for now_pid in pid_list.split():
-    #now_pidの１冊のダウンロード
+main():
+    for now_pid in pid_list.split():
+        #now_pidの１冊のダウンロード
 
-    #情報ページでタイトルと最大数と目次を取得
-    (now_title, now_max, mokuji) = get_info(now_pid)
+        #情報ページでタイトルと最大数と目次を取得
+        (now_title, now_max, mokuji) = get_info(now_pid)
 
-    print 'Downloading pid=', now_pid, now_title, '---ページ総数:', now_max
+        print 'Downloading pid=', now_pid, now_title, '---ページ総数:', now_max
 
-    #page_size毎に分割ダウンロード
-    sub_file_list = book_download (now_pid, now_max, page_size=20)
+        #page_size毎に分割ダウンロード
+        sub_file_list = book_download (now_pid, now_max, page_size=20)
 
-    #pdfファイルを連結
-    pdf_merge(sub_file_list, now_pid + '.pdf')
+        #pdfファイルを連結
+        pdf_merge(sub_file_list, now_pid + '.pdf')
 
-    if mokuji:
-        #目次があればブックマークつける
-        add_bookmark(now_pid + '.pdf', now_title + '.pdf', mokuji)
-        os.remove(now_pid + '.pdf')
-    else:
-        #目次がない場合はpdfファイル名を書名に変えて終わり
-        os.rename(now_pid + '.pdf' , now_title + '.pdf')   
+        if mokuji:
+            #目次があればブックマークつける
+            add_bookmark(now_pid + '.pdf', now_title + '.pdf', mokuji)
+            os.remove(now_pid + '.pdf')
+        else:
+            #目次がない場合はpdfファイル名を書名に変えて終わり
+            os.rename(now_pid + '.pdf' , now_title + '.pdf')   
+
+
+if __name__ == '__main__':
+    main()
