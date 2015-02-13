@@ -1,10 +1,20 @@
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
-#こんな風にして近代ライブラリーからタイトルとpidのリストを作る
-# python kindai_list.py 百科事典
+'''
+こんな風にして近代デジタルライブラリーkindai.ndl.go.jp/
+を検索し、タイトルとpidのリストを作る
+
+$ ./kindai_list.py 百科事典
+
+1233478 最新国民百科事典    国民百科事典刊行会 編 (国民百科事典刊行会, 1934)
+1262562 最新常識百科事典    国民常識普及会 編 (国民図書協会出版部, 1939)
+1023666 人生の百科事典 東亜書房編輯部 編 (東亜書房, 1936)
+・・・
+
+'''
 
 import sys
 import re
-import os
 import requests
 from bs4 import BeautifulSoup
 
@@ -48,7 +58,10 @@ def get_hits_num(soup):
     hits = m_hits.group(1)
     return hits 
 
-main():
+
+
+
+def main():
     search_keyword = sys.argv[1]  #引数を検索キーワードにする
     #search_keyword = "これは"
     url = "http://kindai.ndl.go.jp/search/searchResult?title=%s&reshowFlg=1&detailSearchTypeNo=K&rows=200" % search_keyword
