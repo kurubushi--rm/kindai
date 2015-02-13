@@ -1,18 +1,28 @@
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-#以下にダウンロードするpidコードのリストを並べる
-pid_list = '''\
-1444386
-992868
-1879853
-1920697
-1764781
-991742
 '''
+標準入力からpidコードのリスト（改行区切り）を読み込んで
+近代デジタルライブラリーkindai.ndl.go.jp/から書物を
+pdfファイルとして（page_size=20ページずつ）ダウンロードした後、
+１冊にまとめて、目次データをつかってブックマークを付ける
+
+echo 1262562 | ./kindai_download.py
+　（pidコード1262562の本をダウンロード）
+また
+cat pid_list.txt | ./kindai_download.py
+　（pid_list.txtに並ぶpidコードの本をダウンロード）
+また
+./kindai_list.py 百科事典| ./kindai_download.py
+　（kindai_list.pyで「百科事典」をタイトルで検索した本をダウンロードする）
+
+'''
+
 
 import time
 import re
 import os
+import sys
 import requests
 from bs4 import BeautifulSoup
 from PyPDF2 import PdfFileMerger, PdfFileWriter, PdfFileReader
@@ -108,7 +118,7 @@ def pages_download(now_pid, start_page, end_page):
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'}
     download_url='http://kindai.ndl.go.jp/view/pdf/digidepo_'+now_pid+'.pdf?pdfOutputRangeType=R&pdfPageSize=&pdfOutputRanges='
     now_url = download_url+str(start_page)+'-'+str(end_page)
-    now_filename = now_pid + '--' + str(start_page) + '.pdf'
+    now_filename = now_pid + '--' + str(start_page) + '-' + str(end_page) + '.pdf'
     print 'Fetching', now_url
     #ファイルを取得
     r = requests.get(now_url, headers=headers)
@@ -136,11 +146,13 @@ def book_download(now_pid, now_max, page_size=20):
     return sub_file_list
 
 
-
 #メインループのはじまり
-main():
-    for now_pid in pid_list.split():
+def main():
+    for line in sys.stdin:
         #now_pidの１冊のダウンロード
+        now_pid = line[:-1].split()[0]
+        now_pid = now_pid.strip()
+        print now_pid
 
         #情報ページでタイトルと最大数と目次を取得
         (now_title, now_max, mokuji) = get_info(now_pid)
